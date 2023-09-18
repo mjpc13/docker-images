@@ -19,14 +19,14 @@ RUN apt install -y libeigen3-dev
 WORKDIR /opt
 RUN git clone https://github.com/opencv/opencv_contrib.git
 WORKDIR /opt/opencv_contrib/
-RUN git checkout 4.5.1
+RUN git checkout 4.2.0
 
 
-#Install OpenCV version 4.5.1
+#Install OpenCV version 4.2.0
 WORKDIR /opt
 RUN git clone https://github.com/opencv/opencv.git
 WORKDIR /opt/opencv
-RUN git checkout 4.5.1
+RUN git checkout 4.2.0
 WORKDIR /opt/opencv/build/
 
 RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
