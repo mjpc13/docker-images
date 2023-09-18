@@ -1,0 +1,50 @@
+ARG ARCH=
+FROM ${ARCH}ubuntu:20.04
+ARG MAKEFLAGS="-j$(nproc)"
+LABEL maintainer="Mario Cristovao <mjpc13@protonmail.com>"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+
+SHELL ["/bin/bash","-c"]
+
+# Install required packages
+
+RUN apt-get update && apt-get -y install build-essential cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-dev python3-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev
+
+RUN apt install -y libeigen3-dev
+
+
+# Install OpenCV Contribs
+WORKDIR /opt
+RUN git clone https://github.com/opencv/opencv_contrib.git
+WORKDIR /opt/opencv_contrib/
+RUN git checkout 4.5.1
+
+
+#Install OpenCV version 4.5.1
+WORKDIR /opt
+RUN git clone https://github.com/opencv/opencv.git
+WORKDIR /opt/opencv
+RUN git checkout 4.5.1
+WORKDIR /opt/opencv/build/
+
+RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
+-D CMAKE_INSTALL_PREFIX=/app \
+-D BUILD_EXAMPLES=OFF \
+-D INSTALL_PYTHON_EXAMPLES=OFF \
+-D INSTALL_C_EXAMPLES=OFF \
+-D OPENCV_ENABLE_NONFREE=ON \
+-D WITH_EIGEN=ON \
+-D ENABLE_FAST_MATH=1 \
+-D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules/ \
+#-D HAVE_opencv_python2=ON \
+-D HAVE_opencv_python3=ON \
+#-D BUILD_opencv_python2=ON \
+-D BUILD_opencv_python3=ON \
+-D BUILD_EXAMPLES=OFF ..
+
+RUN make $MAKEFLAGS install
+
+
+CMD ["bash"]
